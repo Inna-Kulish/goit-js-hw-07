@@ -40,29 +40,23 @@ openModal(evt.target)
 
 // Відкриття модального вікна з бібліотекою Lightbox
 function openModal (image) {
-  instance = basicLightbox.create(`
-  <img src="${image.dataset.source}">
-`)
-instance.show()
-
-// Додаємо слухача події на модальне вікно
-const modal = document.querySelector('.basicLightbox')
-modal.addEventListener('click', closeModal)
-
-// Додаємо слухача події для прослухування клавіші Esc
-window.addEventListener('keydown', closeByEsc)
-}
-
-// Закриття модального вікна
-function closeModal () {
-    instance.close() 
-    window.removeEventListener('keydown', closeByEsc)  
+instance = basicLightbox.create(
+  `<img src="${image.dataset.source}"/>`,
+  {
+    onShow: instance => {
+      window.addEventListener('keydown', closeByEsc);
+    },
+    onClose: instance => {
+      window.removeEventListener('keydown', closeByEsc);
+    },
+  }
+);
+instance.show();
 }
 
 // Закриття модального вікна ESC
 function closeByEsc ({code}) {
     if (code === 'Escape') {
-        closeModal()
+        instance.close()
     }
 }
-
